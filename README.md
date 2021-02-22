@@ -63,4 +63,15 @@ Além do funcionamento do sistema, será avaliada a organização do código, co
 
 ## Instruções para construção (build) e execução (run) do backend
 
-<preencha as instruções nesse tópico>
+- Preencher as informações da conexão com o banco de dados no arquivo *application.yml*, na pasta *resources*
+- Executar o arquivo gradlew com a tarefa (Task) desejada
+
+### Executando
+````
+./gradlew bootRun
+````
+
+### Criando um arquivo *jar*
+````
+./gradlew bootJar
+````

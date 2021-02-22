@@ -1,0 +1,6 @@
+app:
+  datasource:
+    jdbc-url: jdbc:postgresql://<host>:<port>/catalogo_leite
+    username: postgres
+    password: XXXX
+    pool-size: 30
