@@ -1,11 +1,13 @@
 package com.wmeds.catalogodeleite.controller
 
 import com.wmeds.catalogodeleite.model.Produto
+import com.wmeds.catalogodeleite.model.SearchResult
 import com.wmeds.catalogodeleite.service.ProdutoService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
+@CrossOrigin
 @RestController
 @RequestMapping("/api/produtos")
 class ProdutoController(private val service: ProdutoService) {
@@ -31,7 +33,7 @@ class ProdutoController(private val service: ProdutoService) {
     fun search(@RequestParam query: String,
                @RequestParam offset: Int?,
                @RequestParam limit: Int?
-    ): Collection<Produto> =
+    ): SearchResult<Produto> =
         service.search(query, offset, limit)
 
     @GetMapping("/{codigo}/ifSatisfies")

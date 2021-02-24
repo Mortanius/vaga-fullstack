@@ -1,6 +1,7 @@
 package com.wmeds.catalogodeleite.dao
 
 import com.wmeds.catalogodeleite.model.Produto
+import com.wmeds.catalogodeleite.model.SearchResult
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.jdbc.core.JdbcTemplate
@@ -66,17 +67,28 @@ class ProdutoDataAccessService (
         return jdbcTemplate.query(sql, ProdutoRowMapper(), *args)
     }
 
-    override fun searchByNome(query: String, offset: Int?, limit: Int?): Collection<Produto> {
-        val sql = "SELECT codigo, nome FROM produto WHERE nome ILIKE ?"
-        return query(sql, offset, limit, SearchUtils.entreWildCards(query))
+    override fun searchByNome(query: String, offset: Int?, limit: Int?): SearchResult<Produto> {
+        // Case Insensitive (ILIKE) para busca por nome
+        var sql = "SELECT COUNT(*) FROM produto WHERE nome ILIKE ?"
+        // Consulta inserida pode estar em qualquer posição da String (%exemplo%)
+        val likeExpr = SearchUtils.entreWildCards(query)
+        val totalCount = jdbcTemplate.queryForObject(sql, Int::class.java, likeExpr)
+        sql = "SELECT codigo, nome FROM produto WHERE nome ILIKE ?"
+        val items = query(sql, offset, limit, likeExpr)
+        return SearchResult(items, totalCount!!)
     }
 
-    override fun searchByCodigo(query: String, offset: Int?, limit: Int?): Collection<Produto> {
-        val sql = "SELECT codigo, nome FROM produto WHERE codigo LIKE ?"
-        return query(sql, offset, limit, SearchUtils.wildCardFim(query))
+    override fun searchByCodigo(query: String, offset: Int?, limit: Int?): SearchResult<Produto> {
+        var sql = "SELECT COUNT(*) FROM produto WHERE codigo LIKE ?"
+        // Busca por codigos que comecem com o numero inserido (123%)
+        val likeExpr = SearchUtils.wildCardFim(query)
+        val totalCount = jdbcTemplate.queryForObject(sql, Int::class.java, likeExpr)
+        sql = "SELECT codigo, nome FROM produto WHERE codigo LIKE ?"
+        val items = query(sql, offset, limit, likeExpr)
+        return SearchResult(items, totalCount!!)
     }
 
-    private fun queryForObject(sql: String, @Nullable vararg args: Any): Produto {
+    private fun queryForProduto(sql: String, @Nullable vararg args: Any): Produto {
         try {
             return jdbcTemplate.queryForObject(sql, ProdutoRowMapper(), *args)!!
         } catch (e: Exception) {
@@ -95,7 +107,7 @@ class ProdutoDataAccessService (
                                     vararg args: Any
     ): Produto {
         try {
-            return queryForObject(sql, *args)
+            return queryForProduto(sql, *args)
         } catch (_: NoSuchElementException) {
             throw NoSuchElementException("Produto com código $codigo não encontrado na busca \"$query\"")
         }
