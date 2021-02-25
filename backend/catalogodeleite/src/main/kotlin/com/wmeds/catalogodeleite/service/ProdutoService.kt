@@ -4,6 +4,7 @@ import com.wmeds.catalogodeleite.dao.IProdutoDao
 import com.wmeds.catalogodeleite.model.Produto
 import com.wmeds.catalogodeleite.model.SearchResult
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Service
 
 @Service
@@ -18,6 +19,13 @@ class ProdutoService(
     fun create(p: Produto) = dao.create(p)
 
     fun delete(codigo: String) = dao.delete(Produto(codigo, ""))
+
+    fun update(codigo: String, p: Produto) {
+        if (codigo != p.codigo) {
+            throw DataIntegrityViolationException("O código do produto não pode ser alterado")
+        }
+        dao.update(p)
+    }
 
     private fun isBuscaPorCodigo(query: String): Boolean {
         val regexBuscaPorCodigo = Regex("^\\d{$queryTamanhoMinimo}\\d*$")

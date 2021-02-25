@@ -11,6 +11,8 @@ interface IProdutoDao {
 
     fun delete(p: Produto)
 
+    fun update(p: Produto)
+
     // Buscam produtos que correspondem à consulta
     fun searchByNome(
         query: String,

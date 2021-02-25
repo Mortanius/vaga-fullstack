@@ -63,6 +63,11 @@ class ProdutoDataAccessService (
         }
     }
 
+    override fun update(p: Produto) {
+        val sql = "UPDATE produto SET nome=? WHERE codigo=?"
+        jdbcTemplate.update(sql, p.nome, p.codigo)
+    }
+
     private fun makeSqlWithOrder(sql: String, sort: Array<String>?, order: Array<String>?): String {
         var orderSql = ""
         if (!sort.isNullOrEmpty()) {

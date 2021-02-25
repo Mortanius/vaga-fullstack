@@ -33,7 +33,10 @@
             <ng-container matColumnDef="acoes">
                 <mat-header-cell *matHeaderCellDef> Ações </mat-header-cell>
                 <mat-cell *matCellDef="let element; let i = index">
-                    <button type="button" class="btn btn-danger" (click)="deleteProduto(i)"> Remover </button>
+                    <button type="button" class="btn btn-info" style="margin-right: 0.5rem;"
+                     (click)="editProduto(i)"> Editar </button>
+                    <button type="button" class="btn btn-danger" style="margin-right: 0.5rem;"
+                        (click)="deleteProduto(i)"> Remover </button>
                 </mat-cell>
             </ng-container>
     

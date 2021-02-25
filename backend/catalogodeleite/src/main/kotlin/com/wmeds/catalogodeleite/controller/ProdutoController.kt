@@ -33,6 +33,9 @@ class ProdutoController(private val service: ProdutoService) {
     @DeleteMapping("/{codigo}")
     fun delete(@PathVariable codigo: String) = service.delete(codigo)
 
+    @PutMapping("/{codigo}")
+    fun update(@PathVariable codigo: String, @RequestBody p: Produto) = service.update(codigo, p)
+
     @GetMapping("/search")
     fun search(
         @RequestParam query: String,

@@ -25,6 +25,10 @@ export class ProdutoService {
     return this.http.delete<void>(`${this.apiServerUrl}/produtos/${codigo}`);
   }
 
+  public update(produto: Produto): Observable<void> {
+    return this.http.put<void>(`${this.apiServerUrl}/produtos/${produto.codigo}`, produto);
+  }
+
   public search(
     query: string,
     offset: number,

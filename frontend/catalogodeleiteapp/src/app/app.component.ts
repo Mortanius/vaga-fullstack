@@ -5,7 +5,7 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { Produto } from './produto';
 import { ProdutoService } from './produto.service';
 import { SearchResult } from './searchresult'
-import { HttpErrorResponse } from '@angular/common/http';
+import { HttpErrorResponse, HttpResponse, HttpResponseBase } from '@angular/common/http';
 import { NgbdAlertCloseable } from './alert.component';
 
 interface Search {
@@ -128,6 +128,11 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.matTable.renderRows();
   }
 
+  private dataSourceSet(index: number, p: Produto): void {
+    this.dataSource.data[index] = p;
+    this.matTable.renderRows();
+  }
+
   private dataSourceDelete(index: number): void {
     this.dataSource.data.splice(index, 1);
     this.matTable.renderRows();
@@ -203,6 +208,26 @@ export class AppComponent implements OnInit, AfterViewInit {
         }
       );
     }
+  }
+
+  public editProduto(index: number): void {
+    const p = this.dataSource.data[index];
+    const nome = window.prompt("Insira o nome", p.nome);
+    if (nome == null || nome == p.nome) {
+      return;
+    }
+    this.produtoService.update(<Produto>{codigo: p.codigo, nome}).subscribe(
+      () => {
+        this.produtoService.get(p.codigo).subscribe(
+          (response: Produto) => {
+            this.dataSourceSet(index, response);
+            this.displayMessage("Atualizado com sucesso");
+          },
+          (error: HttpErrorResponse) => this.displayErrorMessage(error.error)
+        );
+      },
+      (error: HttpErrorResponse) => this.displayErrorMessage(error.error)
+    );
   }
 
   public sortProdutos(sort: Sort): void {
