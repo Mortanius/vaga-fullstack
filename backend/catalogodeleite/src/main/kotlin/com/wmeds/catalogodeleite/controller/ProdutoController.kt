@@ -34,11 +34,14 @@ class ProdutoController(private val service: ProdutoService) {
     fun delete(@PathVariable codigo: String) = service.delete(codigo)
 
     @GetMapping("/search")
-    fun search(@RequestParam query: String,
-               @RequestParam offset: Int?,
-               @RequestParam limit: Int?
+    fun search(
+        @RequestParam query: String,
+        @RequestParam offset: Int?,
+        @RequestParam limit: Int?,
+        @RequestParam sort: Array<String>?,
+        @RequestParam order: Array<String>?
     ): SearchResult<Produto> =
-        service.search(query, offset, limit)
+        service.search(query, offset, limit, sort, order)
 
     @GetMapping("/{codigo}/ifSatisfies")
     fun getIfSatisfiesQuery(@RequestParam query: String,

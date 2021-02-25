@@ -11,7 +11,6 @@ import org.springframework.jdbc.core.RowMapper
 import org.springframework.lang.Nullable
 import org.springframework.stereotype.Repository
 import java.sql.ResultSet
-import java.sql.SQLException
 
 @Repository("postgres")
 class ProdutoDataAccessService (
@@ -42,7 +41,6 @@ class ProdutoDataAccessService (
             jdbcTemplate.update(sql, p.codigo, p.nome)
         } catch (e: DataAccessException) {
             if (e.message == null) throw e
-            val sqlErr = e.cause as SQLException
             val reg = Regex("already exists.")
 
             if (reg.containsMatchIn(e.message!!)) {
@@ -65,42 +63,82 @@ class ProdutoDataAccessService (
         }
     }
 
+    private fun makeSqlWithOrder(sql: String, sort: Array<String>?, order: Array<String>?): String {
+        var orderSql = ""
+        if (!sort.isNullOrEmpty()) {
+            val orderByBlocks: ArrayList<String> = arrayListOf()
+            val columnsToSort = setOf("codigo", "nome")
+            for (index in sort.indices) {
+                if (!columnsToSort.contains(sort[index])) {
+                    continue
+                }
+                columnsToSort.minus(sort[index])
+                var orderByBlock = " ${sort[index]}"
+                if (order != null && index < order.size) {
+                    var orderVal = order[index].toUpperCase()
+                    when(orderVal) {
+                        "ASC", "DESC" -> orderByBlock += " ${orderVal}"
+                    }
+                }
+                orderByBlocks.add(orderByBlock)
+            }
+            orderSql = "ORDER BY " + orderByBlocks.joinToString(", ")
+        }
+        return "$sql $orderSql"
+    }
+
     private fun query(sql: String,
                       offset: Int?,
                       limit: Int?,
+                      sort: Array<String>? = null,
+                      order: Array<String>? = null,
                       @Nullable vararg args: Any
     ): Collection<Produto> {
+        var sqlWithOrder = makeSqlWithOrder(sql, sort, order)
         if (offset != null && offset >= 0 && limit != null && limit > 0) {
             // Consulta com LIMIT e OFFSET
-            return jdbcTemplate.query(sql + " LIMIT ? OFFSET ?",
+            return jdbcTemplate.query(
+                "$sqlWithOrder LIMIT ? OFFSET ?",
                 ProdutoRowMapper(),
                 *args,
                 limit,
                 offset)
         }
         // Consulta sem LIMIT e OFFSET
-        return jdbcTemplate.query(sql, ProdutoRowMapper(), *args)
+        return jdbcTemplate.query(sqlWithOrder, ProdutoRowMapper(), *args)
     }
 
-    override fun searchByNome(query: String, offset: Int?, limit: Int?): SearchResult<Produto> {
+    override fun searchByNome(
+        query: String,
+        offset: Int?,
+        limit: Int?,
+        sort: Array<String>?,
+        order: Array<String>?
+    ): SearchResult<Produto> {
         // Case Insensitive (ILIKE) para busca por nome
         var sql = "SELECT COUNT(*) FROM produto WHERE nome ILIKE ?"
         // Consulta inserida pode estar em qualquer posição da String (%exemplo%)
         val likeExpr = SearchUtils.entreWildCards(query)
         val totalCount = jdbcTemplate.queryForObject(sql, Int::class.java, likeExpr)
         sql = "SELECT codigo, nome FROM produto WHERE nome ILIKE ?"
-        val items = query(sql, offset, limit, likeExpr)
-        return SearchResult(items, totalCount!!)
+        val items = query(sql, offset, limit, sort, order, likeExpr)
+        return SearchResult(items, totalCount)
     }
 
-    override fun searchByCodigo(query: String, offset: Int?, limit: Int?): SearchResult<Produto> {
+    override fun searchByCodigo(
+        query: String,
+        offset: Int?,
+        limit: Int?,
+        sort: Array<String>?,
+        order: Array<String>?
+    ): SearchResult<Produto> {
         var sql = "SELECT COUNT(*) FROM produto WHERE codigo LIKE ?"
         // Busca por codigos que comecem com o numero inserido (123%)
         val likeExpr = SearchUtils.wildCardFim(query)
         val totalCount = jdbcTemplate.queryForObject(sql, Int::class.java, likeExpr)
         sql = "SELECT codigo, nome FROM produto WHERE codigo LIKE ?"
-        val items = query(sql, offset, limit, likeExpr)
-        return SearchResult(items, totalCount!!)
+        val items = query(sql, offset, limit, sort, order, likeExpr)
+        return SearchResult(items, totalCount)
     }
 
     private fun queryForProduto(sql: String, @Nullable vararg args: Any): Produto {

@@ -12,9 +12,21 @@ interface IProdutoDao {
     fun delete(p: Produto)
 
     // Buscam produtos que correspondem à consulta
-    fun searchByNome(query: String, offset: Int? = null, limit: Int? = null): SearchResult<Produto>
+    fun searchByNome(
+        query: String,
+        offset: Int? = null,
+        limit: Int? = null,
+        sort: Array<String>? = null,
+        order: Array<String>? = null
+    ): SearchResult<Produto>
 
-    fun searchByCodigo(query: String, offset: Int? = null, limit: Int? = null): SearchResult<Produto>
+    fun searchByCodigo(
+        query: String,
+        offset: Int? = null,
+        limit: Int? = null,
+        sort: Array<String>? = null,
+        order: Array<String>? = null
+    ): SearchResult<Produto>
 
     // Retorna o produto com o código informado caso ele corresponda à consulta
     fun getIfSatisfiesSearchByNome(query: String, codigo: String): Produto

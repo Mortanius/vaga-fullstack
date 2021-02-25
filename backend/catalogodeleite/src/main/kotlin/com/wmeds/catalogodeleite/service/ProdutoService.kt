@@ -5,7 +5,6 @@ import com.wmeds.catalogodeleite.model.Produto
 import com.wmeds.catalogodeleite.model.SearchResult
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
-import java.lang.IllegalArgumentException
 
 @Service
 class ProdutoService(
@@ -25,17 +24,23 @@ class ProdutoService(
         return query.matches(regexBuscaPorCodigo)
     }
 
-    fun search(query: String, offset: Int?, limit: Int?): SearchResult<Produto> {
+    fun search(
+        query: String,
+        offset: Int?,
+        limit: Int?,
+        sort: Array<String>?,
+        order: Array<String>?
+    ): SearchResult<Produto> {
         if (query.length < queryTamanhoMinimo) {
             throw IllegalArgumentException("A consulta possui tamanho insuficiente")
         }
 
         if (isBuscaPorCodigo(query)) {
             // Busca por codigo
-            return dao.searchByCodigo(query, offset, limit)
+            return dao.searchByCodigo(query, offset, limit, sort, order)
         }
         // Busca por nome
-        return dao.searchByNome(query, offset, limit)
+        return dao.searchByNome(query, offset, limit, sort, order)
     }
 
     fun getIfSatisfiesQuery(query: String, codigo: String): Produto {
