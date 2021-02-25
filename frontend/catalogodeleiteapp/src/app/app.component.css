@@ -39,9 +39,6 @@ mat-header-cell:nth-child(5) {
     flex: 0 0 10%;
 }
 
-.navbar {
-  padding: 0;
-  display: inline;
-  height: fit-content;
+#searchForm {
+  padding-bottom: 1rem;
 }
-

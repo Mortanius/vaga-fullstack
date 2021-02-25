@@ -16,16 +16,17 @@
         <button class="btn btn-primary">Buscar</button>
     </form>
 
-    <div class="data-access-factory-container" *ngIf="currentQuery.length > 0">
-        <mat-table #tableProdutos [dataSource]="dataSource">
+    <div class="data-access-factory-container" *ngIf="currentSearch.query.length > 0">
+        <table mat-table [dataSource]="dataSource" matSort (matSortChange)="sortProdutos($event)"
+            class="mat-elevation-z8">
 
             <ng-container matColumnDef="codigo">
-                <mat-header-cell *matHeaderCellDef> Código </mat-header-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Código </mat-header-cell>
                 <mat-cell *matCellDef="let element"> {{element.codigo}} </mat-cell>
             </ng-container>
     
             <ng-container matColumnDef="nome">
-                <mat-header-cell *matHeaderCellDef> Nome </mat-header-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Nome </mat-header-cell>
                 <mat-cell *matCellDef="let element"> {{element.nome}} </mat-cell>
             </ng-container>
     
@@ -39,7 +40,7 @@
             <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
             <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
     
-        </mat-table>
+        </table>
         <mat-paginator  #paginatorProdutos
                         [pageSizeOptions]="[10, 20, 30]"
                         [length]="produtosSearchResult.total_count"

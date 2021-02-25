@@ -25,8 +25,19 @@ export class ProdutoService {
     return this.http.delete<void>(`${this.apiServerUrl}/produtos/${codigo}`);
   }
 
-  public search(query: string, offset: number, limit: number): Observable<SearchResult<Produto>> {
-    return this.http.get<SearchResult<Produto>>(`${this.apiServerUrl}/produtos/search?query=${query}&offset=${offset}&limit=${limit}`);
+  public search(
+    query: string,
+    offset: number,
+    limit: number,
+    sort: string[] = [],
+    order: string[] = []
+  ): Observable<SearchResult<Produto>> {
+    const sortStr = sort.length == 0 ? "" :
+      `&sort=${sort.join('&sort=')}`
+    const orderStr = order.length == 0 ? "" :
+      `&order=${order.join('&order=')}`
+    const uri = `${this.apiServerUrl}/produtos/search?query=${query}&offset=${offset}&limit=${limit}${sortStr}${orderStr}`
+    return this.http.get<SearchResult<Produto>>(uri);
   }
 
   public getIfSatisfiesQuery(query: string, codigo: string): Observable<Produto> {
