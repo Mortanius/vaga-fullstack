@@ -59,7 +59,15 @@ Além do funcionamento do sistema, será avaliada a organização do código, co
 
 ## Instruções para construção (build) e execução (run) do frontend
 
-<preencha as instruções nesse tópico>
+### Executando
+````
+ng serve
+````
+
+### Criando docker image
+````
+docker build -t catalogodeleiteapp .
+````
 
 ## Instruções para construção (build) e execução (run) do backend
 
@@ -74,4 +82,9 @@ Além do funcionamento do sistema, será avaliada a organização do código, co
 ### Criando um arquivo *jar*
 ````
 ./gradlew bootJar
+````
+
+### Criando docker image
+````
+./gradlew bootBuildImage
 ````
