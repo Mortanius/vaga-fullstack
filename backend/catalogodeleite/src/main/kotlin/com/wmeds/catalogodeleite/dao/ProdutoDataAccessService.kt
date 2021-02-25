@@ -3,12 +3,15 @@ package com.wmeds.catalogodeleite.dao
 import com.wmeds.catalogodeleite.model.Produto
 import com.wmeds.catalogodeleite.model.SearchResult
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.dao.DataAccessException
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.lang.Nullable
 import org.springframework.stereotype.Repository
 import java.sql.ResultSet
+import java.sql.SQLException
 
 @Repository("postgres")
 class ProdutoDataAccessService (
@@ -35,7 +38,19 @@ class ProdutoDataAccessService (
 
     override fun create(p: Produto) {
         val sql = "INSERT INTO produto (codigo, nome) VALUES (?, ?)"
-        jdbcTemplate.update(sql, p.codigo, p.nome)
+        try {
+            jdbcTemplate.update(sql, p.codigo, p.nome)
+        } catch (e: DataAccessException) {
+            if (e.message == null) throw e
+            val sqlErr = e.cause as SQLException
+            val reg = Regex("already exists.")
+
+            if (reg.containsMatchIn(e.message!!)) {
+                val msg = "Produto com código ${p.codigo} já cadastrado"
+                throw DataIntegrityViolationException(msg)
+            }
+            throw e
+        }
     }
 
     override fun delete(p: Produto) {
