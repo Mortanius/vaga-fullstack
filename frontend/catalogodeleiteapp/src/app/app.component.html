@@ -1,0 +1,66 @@
+
+<div>
+    <ngbd-alert-closeable class="fixed-top"></ngbd-alert-closeable>
+</div>
+
+
+<div #mainContainer class="container-fluid" style="padding-top: 5px; padding-bottom: 10px;">
+
+    <h1> Catálogo de Leite </h1>
+
+    <form id="searchForm" (ngSubmit)="searchProdutos()" #searchForm="ngForm">
+        <div class="form-group">
+            <label for="query"> Digite os dados para busca </label>
+            <input #queryInput type="text" class="form-control" name="query" required minlength="3" maxlength="30">
+        </div>
+        <button class="btn btn-primary">Buscar</button>
+    </form>
+
+    <div class="data-access-factory-container" *ngIf="currentQuery.length > 0">
+        <mat-table #tableProdutos [dataSource]="dataSource">
+
+            <ng-container matColumnDef="codigo">
+                <mat-header-cell *matHeaderCellDef> Código </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.codigo}} </mat-cell>
+            </ng-container>
+    
+            <ng-container matColumnDef="nome">
+                <mat-header-cell *matHeaderCellDef> Nome </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.nome}} </mat-cell>
+            </ng-container>
+    
+            <ng-container matColumnDef="acoes">
+                <mat-header-cell *matHeaderCellDef> Ações </mat-header-cell>
+                <mat-cell *matCellDef="let element; let i = index">
+                    <button type="button" class="btn btn-danger" (click)="deleteProduto(i)"> Remover </button>
+                </mat-cell>
+            </ng-container>
+    
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    
+        </mat-table>
+        <mat-paginator  #paginatorProdutos
+                        [pageSizeOptions]="[10, 20, 30]"
+                        [length]="produtosSearchResult.total_count"
+                        (page)="onPageChanged($event)"></mat-paginator>
+
+        <div id="create-product-container">
+            <h2> Cadastrar novo produto </h2>
+            <form id="createProductForm" (ngSubmit)="createProduto()" #createProductForm="ngForm">
+                <div class="form-group row" style="margin-right: auto; margin-left: auto;">
+                    <div style="padding-right: 10px; width: 20%;">
+                        <label for="codigo"> Código </label>
+                        <input name="codigo" type="tel" class="form-control">
+                    </div>
+                    <div style="padding-right: 10px; width: 80%;">
+                        <label for="nome"> Nome </label>
+                        <input name="nome" type="text" class="form-control">
+                    </div>
+                </div>
+                <button class="btn btn-primary"> Cadastrar </button>
+            </form>
+        </div>
+    </div>
+    
+</div>

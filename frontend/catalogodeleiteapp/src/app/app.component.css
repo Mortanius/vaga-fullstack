@@ -1,0 +1,47 @@
+/* Structure */
+table {
+    width: 100%;
+  }
+  
+  .mat-form-field {
+    font-size: 14px;
+    width: 100%;
+  }
+  
+  /deep/ .mat-column-position {
+    position: relative;
+  }
+  
+  /deep/ .mat-column-position::after {
+    content: " ";
+    border-right: 1px solid #d0d0d0;
+    position: absolute;
+    right: 4px;
+    top: 4px;
+    bottom: 4px;
+  }
+
+  .mat-row {
+    height: auto;
+  }
+  
+  .mat-cell {
+    padding-right: 5%;
+  }
+
+mat-cell:nth-child(1),
+mat-header-cell:nth-child(1) {
+    flex: 0 0 30%;
+}
+
+mat-cell:nth-child(5),
+mat-header-cell:nth-child(5) {
+    flex: 0 0 10%;
+}
+
+.navbar {
+  padding: 0;
+  display: inline;
+  height: fit-content;
+}
+
