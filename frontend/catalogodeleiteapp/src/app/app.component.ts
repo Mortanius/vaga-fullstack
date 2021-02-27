@@ -47,7 +47,6 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    console.log(this.sort);
     this.dataSource.sort = this.sort;
   }
 
@@ -244,8 +243,6 @@ export class AppComponent implements OnInit, AfterViewInit {
       // Altera
       this.currentSearch.order[index] = sort.direction;
     }
-    console.log(this.currentSearch.sort);
-    console.log(this.currentSearch.order);
     this.search();
   }
   
