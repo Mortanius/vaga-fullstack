@@ -71,7 +71,7 @@ docker build -t catalogodeleiteapp .
 ````
 ### Criando e executando container
 ````
-docker build -t catalogodeleiteapp .
+docker run -it -e PORT=<PORTA_COTAINER> -p <PORTA_HOST>:<PORTA_CONTAINER> catalogodeleiteapp
 ````
 
 ## Instruções para construção (build) e execução (run) do backend
@@ -102,5 +102,5 @@ docker build -t catalogodeleite .
 ````
 ### Criando e executando container
 ````
-docker run -it -e PORT=<PORTA_COTAINER> -p <PORTA_HOST>:<PORTA_CONTAINER>
+docker run -it -e PORT=<PORTA_COTAINER> -p <PORTA_HOST>:<PORTA_CONTAINER> catalogodeleite
 ````
