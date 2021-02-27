@@ -59,6 +59,7 @@ Além do funcionamento do sistema, será avaliada a organização do código, co
 
 ## Instruções para construção (build) e execução (run) do frontend
 
+- Adicionar o endereço base da API no arquivo *environment.ts* na pasta *environments*
 ### Executando
 ````
 ng serve
@@ -68,10 +69,17 @@ ng serve
 ````
 docker build -t catalogodeleiteapp .
 ````
+### Criando e executando container
+````
+docker build -t catalogodeleiteapp .
+````
 
 ## Instruções para construção (build) e execução (run) do backend
 
-- Preencher as informações da conexão com o banco de dados no arquivo *application.yml*, na pasta *resources*
+- Preencher as informações no arquivo *application.yml*, na pasta *resources*
+  - Dados de conexão com o banco de dados PostgreSQL
+  - Em qual porta executar
+- Adicionar o endereço do frontend à annotation @CrossOrigin.
 - Executar o arquivo gradlew com a tarefa (Task) desejada
 
 ### Executando
@@ -87,4 +95,12 @@ docker build -t catalogodeleiteapp .
 ### Criando docker image
 ````
 ./gradlew bootBuildImage
+````
+ou
+````
+docker build -t catalogodeleite .
+````
+### Criando e executando container
+````
+docker run -it -e PORT=<PORTA_COTAINER> -p <PORTA_HOST>:<PORTA_CONTAINER>
 ````

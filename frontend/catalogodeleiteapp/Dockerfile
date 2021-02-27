@@ -10,5 +10,6 @@ RUN npm run build --prod
 
 FROM nginx:1.17.1-alpine AS prod-stage
 COPY --from=build /app/dist/catalogodeleiteapp /usr/share/nginx/html
-EXPOSE 80
-CMD ["nginx","-g","daemon off;"]
+COPY nginx.default.conf /etc/nginx/conf.d/default.conf
+
+CMD sed -i -e 's/$PORT/'"$PORT"'/g' /etc/nginx/conf.d/default.conf && nginx -g "daemon off;"

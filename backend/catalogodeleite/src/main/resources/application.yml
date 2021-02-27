@@ -4,3 +4,5 @@ app:
     username: postgres
     password: XXXX
     pool-size: 30
+server:
+  port: ${PORT}
